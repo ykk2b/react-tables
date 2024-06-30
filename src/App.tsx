@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 
 export default function App() {
   const [data, setData] = useState<string[][]>([["hello world"]]);
@@ -8,9 +9,13 @@ export default function App() {
   const [endCol, setEndCol] = useState<boolean>(false);
   const [editing, setEditing] = useState<[number, number]>([-1, -1]);
 
-  const transposedData = data[0].map((_, colIndex) =>
+  const transposeAddData = data[0].map((_, colIndex) =>
     data.map((row) => row[colIndex])
   );
+
+  const transposeRemoveData = (): string[][] => {
+    return data.map((row) => row.slice(0, -1));
+  };
 
   return (
     <main className="w-screen h-screen flex justify-center items-center">
@@ -23,39 +28,53 @@ export default function App() {
           setEndCol(false);
         }}
       >
-        <div
-          onClick={() => setData([["hello world"]])}
-          className="cursor-pointer"
-        >
-          reset
-        </div>
         {higherRow && (
-          <div
-            className="cursor-pointer bg-black text-white p-1 font-semibold"
-            onClick={() => {
-              const sample: string[] = [];
-              data.forEach(() => {
-                sample.push("");
-              });
-              setData([sample, ...data]);
-            }}
-          >
-            add row
+          <div className="flex w-full gap-x-2">
+            <div
+              className="cursor-pointer bg-black text-white p-1 font-semibold flex justify-center w-full"
+              onClick={() => {
+                const sample: string[] = [];
+                data.forEach(() => {
+                  sample.push("");
+                });
+                setData([sample, ...data]);
+              }}
+            >
+              <FaPlus size={20} />
+            </div>
+            <div
+              className="cursor-pointer bg-black text-white p-1 font-semibold flex justify-center w-full"
+              onClick={() => {
+                setData(data.reverse().slice(0, -1));
+              }}
+            >
+              <FaMinus size={20} />
+            </div>
           </div>
         )}
         <div className="flex relative">
           {startCol && (
-            <div
-              className="cursor-pointer bg-black text-white p-1 font-semibold absolute -right-[6.5rem] h-full flex flex-col justify-center text-center"
-              onClick={() => {
-                const updatedData = data.map((row) => [...row, ""]);
-                setData(updatedData);
-              }}
-            >
-              add column
+            <div className="flex flex-col absolute -right-[2.2rem] h-full gap-y-2">
+              <div
+                className="cursor-pointer bg-black text-white p-1 font-semibold h-full flex flex-col justify-center text-center"
+                onClick={() => {
+                  const updatedData = data.map((row) => [...row, ""]);
+                  setData(updatedData);
+                }}
+              >
+                <FaPlus size={20} />
+              </div>
+              <div
+                className="cursor-pointer bg-black text-white p-1 font-semibold h-full flex flex-col justify-center text-center"
+                onClick={() => {
+                  setData(transposeRemoveData());
+                }}
+              >
+                <FaMinus size={20} />
+              </div>
             </div>
           )}
-          {transposedData.map((column, columnIndex) => (
+          {transposeAddData.map((column, columnIndex) => (
             <div
               key={columnIndex}
               className="flex flex-col"
@@ -115,27 +134,53 @@ export default function App() {
             </div>
           ))}
           {endCol && (
-            <div
-              className="cursor-pointer bg-black text-white p-1 font-semibold absolute -left-[6.5rem] h-full flex flex-col justify-center text-center"
-              onClick={() => {
-                const updatedData = data.map((row) => ["", ...row]);
-                setData(updatedData);
-              }}
-            >
-              add column
+            <div className="flex flex-col absolute -left-[2.2rem] h-full gap-y-2">
+              <div
+                className="cursor-pointer bg-black text-white p-1 font-semibold h-full flex flex-col justify-center text-center"
+                onClick={() => {
+                  const updatedData = data.map((row) => ["", ...row]);
+                  setData(updatedData);
+                }}
+              >
+                <FaPlus size={20} />
+              </div>
+              <div
+                className="cursor-pointer bg-black text-white p-1 font-semibold h-full flex flex-col justify-center text-center"
+                onClick={() => {
+                  setData(data.map((row) => row.slice(1)));
+                }}
+              >
+                <FaMinus size={20} />
+              </div>
             </div>
           )}
         </div>
         {lowerRow && (
-          <div
-            className="cursor-pointer bg-black text-white p-1 font-semibold"
-            onClick={() => {
-              setData([...data, []]);
-            }}
-          >
-            add row
+          <div className="flex w-full gap-x-2">
+            <div
+              className="cursor-pointer bg-black text-white p-1 font-semibold flex justify-center w-full"
+              onClick={() => {
+                setData([...data, []]);
+              }}
+            >
+              <FaPlus size={20} />
+            </div>
+            <div
+              className="cursor-pointer bg-black text-white p-1 font-semibold flex justify-center w-full"
+              onClick={() => {
+                setData(data.slice(0, -1));
+              }}
+            >
+              <FaMinus size={20} />
+            </div>
           </div>
         )}
+        <div
+          onClick={() => setData([["hello world"]])}
+          className="cursor-pointer mt-4"
+        >
+          <FaTrash size={20} />
+        </div>
       </div>
     </main>
   );
